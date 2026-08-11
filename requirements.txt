@@ -1,6 +1,6 @@
 tensorflow==2.21.0
-pandas 
-numpy 
+numpy<2.0
+pandas==2.2.0
 seaborn
 scikit-learn
 tensorboard
@@ -8,3 +8,5 @@ matplotlib
 streamlit
 scikeras
 ipykernel
+psycopg2-binary
+psycopg2
