@@ -1,0 +1,6 @@
+2026-08-12 21:23:56 | INFO     | __main__ | ingestion.py:71 | Starting data ingestion: source=C:\Users\ashut\Downloads\global_tech_startups_2026.csv, destination=data\raw\global_tech_startups_2026.csv
+2026-08-12 21:23:56 | INFO     | __main__ | ingestion.py:94 | Ingested 25000 rows and 17 columns into data\raw\global_tech_startups_2026.csv
+2026-08-12 21:31:01 | INFO     | __main__ | validation.py:187 | Starting data validation for C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv
+2026-08-12 21:31:01 | INFO     | __main__ | validation.py:205 | Validated 25000 rows and 17 columns in C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv
+2026-08-12 22:29:51 | INFO     | __main__ | cleaning.py:328 | Starting data cleaning: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv, destination=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-12 22:29:51 | INFO     | __main__ | cleaning.py:363 | Data cleaning completed: rows=25000, columns=17, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv

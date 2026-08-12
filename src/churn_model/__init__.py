@@ -1,4 +1,4 @@
-from churn_model import __version__
+
 
 """Tools for preparing data and training a customer-churn model."""
 
