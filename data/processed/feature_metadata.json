@@ -1,0 +1,102 @@
+{
+  "config": {
+    "source_path": "data\\interim\\global_tech_startups_2026_cleaned.csv",
+    "output_dir": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed",
+    "target_column": "acquisition_status",
+    "drop_columns": [
+      "company_id"
+    ],
+    "date_columns": [],
+    "keep_date_columns": false,
+    "age_from_year_columns": [
+      "founding_year"
+    ],
+    "reference_year": 2026,
+    "log_columns": [
+      "total_funding_usd_millions",
+      "valuation_usd_millions",
+      "revenue_arr_millions"
+    ],
+    "ratio_features": [
+      "funding_per_employee=total_funding_usd_millions/current_headcount_2026",
+      "valuation_to_revenue=valuation_usd_millions/revenue_arr_millions",
+      "layoff_rate=layoffs_2024_2025/peak_headcount_2023"
+    ],
+    "train_fraction": 0.7,
+    "validation_fraction": 0.15,
+    "test_fraction": 0.15,
+    "random_state": 42,
+    "stratify": true,
+    "output_format": "csv",
+    "overwrite": true
+  },
+  "input_rows": 25000,
+  "output_rows": 25000,
+  "columns": [
+    "domain",
+    "founding_year",
+    "country",
+    "city",
+    "funding_stage",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "investor_tier",
+    "ai_adoption_level",
+    "acquisition_status",
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue",
+    "layoff_rate"
+  ],
+  "dtypes": {
+    "domain": "object",
+    "founding_year": "int64",
+    "country": "object",
+    "city": "object",
+    "funding_stage": "object",
+    "total_funding_usd_millions": "float64",
+    "valuation_usd_millions": "float64",
+    "revenue_arr_millions": "float64",
+    "monthly_burn_rate_millions": "float64",
+    "runway_months_2024": "float64",
+    "peak_headcount_2023": "int64",
+    "layoffs_2024_2025": "int64",
+    "current_headcount_2026": "int64",
+    "investor_tier": "object",
+    "ai_adoption_level": "object",
+    "acquisition_status": "object",
+    "founding_year_age": "int64",
+    "total_funding_usd_millions_log1p": "float64",
+    "valuation_usd_millions_log1p": "float64",
+    "revenue_arr_millions_log1p": "float64",
+    "funding_per_employee": "float64",
+    "valuation_to_revenue": "float64",
+    "layoff_rate": "float64"
+  },
+  "engineered_features": [
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue",
+    "layoff_rate"
+  ],
+  "split_rows": {
+    "train": 17500,
+    "validation": 3751,
+    "test": 3749
+  },
+  "warnings": [
+    "Ratio 'funding_per_employee' had 11 zero denominators; those results are missing."
+  ]
+}

@@ -4,3 +4,38 @@
 2026-08-12 21:31:01 | INFO     | __main__ | validation.py:205 | Validated 25000 rows and 17 columns in C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv
 2026-08-12 22:29:51 | INFO     | __main__ | cleaning.py:328 | Starting data cleaning: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv, destination=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
 2026-08-12 22:29:51 | INFO     | __main__ | cleaning.py:363 | Data cleaning completed: rows=25000, columns=17, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-13 08:32:37 | INFO     | __main__ | build_features.py:457 | Starting feature building: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed
+2026-08-13 08:32:37 | ERROR    | __main__ | build_features.py:679 | Feature building failed.
+Traceback (most recent call last):
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\features\build_features.py", line 677, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\features\build_features.py", line 660, in main
+    report = build_feature_datasets(config)
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\features\build_features.py", line 464, in build_feature_datasets
+    raise FileNotFoundError(f"Cleaned dataset was not found: {source}")
+FileNotFoundError: Cleaned dataset was not found: C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim
+2026-08-13 08:37:40 | INFO     | __main__ | build_features.py:457 | Starting feature building: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed
+2026-08-13 08:37:40 | INFO     | __main__ | build_features.py:504 | Saved features split: rows=25000, columns=17, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\features.csv
+2026-08-13 08:37:40 | INFO     | __main__ | build_features.py:532 | Saved feature metadata to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\feature_metadata.json
+2026-08-13 08:37:40 | INFO     | __main__ | build_features.py:549 | Feature building completed: rows=25000, columns=17, features_created=0
+2026-08-13 08:38:24 | INFO     | __main__ | build_features.py:457 | Starting feature building: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed
+2026-08-13 08:38:24 | INFO     | __main__ | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-13 08:38:24 | INFO     | __main__ | build_features.py:504 | Saved train split: rows=17500, columns=23, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv
+2026-08-13 08:38:25 | INFO     | __main__ | build_features.py:504 | Saved validation split: rows=3751, columns=23, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\validation.csv
+2026-08-13 08:38:25 | INFO     | __main__ | build_features.py:504 | Saved test split: rows=3749, columns=23, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-13 08:38:25 | INFO     | __main__ | build_features.py:532 | Saved feature metadata to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\feature_metadata.json
+2026-08-13 08:38:25 | WARNING  | __main__ | build_features.py:535 | Feature-building warning: Ratio 'funding_per_employee' had 11 zero denominators; those results are missing.
+2026-08-13 08:38:25 | INFO     | __main__ | build_features.py:549 | Feature building completed: rows=25000, columns=23, features_created=7
+2026-08-13 08:58:26 | INFO     | __main__ | train.py:383 | Starting model training: train=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv, target=acquisition_status, model_type=logistic_regression
+2026-08-13 08:58:26 | INFO     | __main__ | train.py:457 | Fitting model with 17500 rows, 16 numeric features, and 6 categorical features
+2026-08-13 08:58:27 | INFO     | __main__ | train.py:372 | Automatically selected validation dataset: C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\validation.csv
+2026-08-13 08:58:27 | INFO     | __main__ | train.py:536 | Saved trained model to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib
+2026-08-13 08:58:27 | INFO     | __main__ | train.py:537 | Saved training metrics to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\training_metrics.json
+2026-08-13 08:58:27 | INFO     | __main__ | train.py:538 | Model training completed: accuracy=0.2333, weighted_f1=0.2687
+2026-08-13 09:01:01 | INFO     | __main__ | evaluate.py:91 | Starting model evaluation: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-13 09:01:01 | INFO     | __main__ | evaluate.py:154 | Saved evaluation report to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\evaluation_metrics.json
+2026-08-13 09:01:01 | INFO     | __main__ | evaluate.py:155 | Model evaluation completed: rows=3749, accuracy=0.2358, balanced_accuracy=0.3615, weighted_f1=0.2751
+2026-08-13 09:01:58 | INFO     | __main__ | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 09:01:58 | INFO     | __main__ | predict.py:168 | Prediction completed: rows=3749, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 09:01:58 | INFO     | __main__ | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']

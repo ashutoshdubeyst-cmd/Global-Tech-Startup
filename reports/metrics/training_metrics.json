@@ -1,0 +1,155 @@
+{
+  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.joblib",
+  "model_type": "logistic_regression",
+  "target_column": "acquisition_status",
+  "training_rows": 17500,
+  "evaluation_rows": 3751,
+  "evaluation_dataset": "validation",
+  "feature_columns": [
+    "domain",
+    "founding_year",
+    "country",
+    "city",
+    "funding_stage",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "investor_tier",
+    "ai_adoption_level",
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue",
+    "layoff_rate"
+  ],
+  "numeric_columns": [
+    "founding_year",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue",
+    "layoff_rate"
+  ],
+  "categorical_columns": [
+    "domain",
+    "country",
+    "city",
+    "funding_stage",
+    "investor_tier",
+    "ai_adoption_level"
+  ],
+  "metrics": {
+    "accuracy": 0.23327112769928018,
+    "balanced_accuracy": 0.3641484891404302,
+    "precision_weighted": 0.4834381753470428,
+    "recall_weighted": 0.23327112769928018,
+    "f1_weighted": 0.26866010499935644,
+    "labels": [
+      "Acquired",
+      "Acquired (Fire Sale)",
+      "Closed",
+      "IPO",
+      "Independent"
+    ],
+    "confusion_matrix": [
+      [
+        89,
+        9,
+        86,
+        124,
+        88
+      ],
+      [
+        0,
+        153,
+        18,
+        0,
+        0
+      ],
+      [
+        125,
+        244,
+        114,
+        166,
+        114
+      ],
+      [
+        20,
+        3,
+        22,
+        35,
+        22
+      ],
+      [
+        567,
+        57,
+        458,
+        753,
+        484
+      ]
+    ],
+    "classification_report": {
+      "Acquired": {
+        "precision": 0.1111111111111111,
+        "recall": 0.22474747474747475,
+        "f1-score": 0.14870509607351712,
+        "support": 396.0
+      },
+      "Acquired (Fire Sale)": {
+        "precision": 0.3283261802575107,
+        "recall": 0.8947368421052632,
+        "f1-score": 0.4803767660910518,
+        "support": 171.0
+      },
+      "Closed": {
+        "precision": 0.16332378223495703,
+        "recall": 0.14941022280471822,
+        "f1-score": 0.15605749486652978,
+        "support": 763.0
+      },
+      "IPO": {
+        "precision": 0.032467532467532464,
+        "recall": 0.3431372549019608,
+        "f1-score": 0.059322033898305086,
+        "support": 102.0
+      },
+      "Independent": {
+        "precision": 0.6836158192090396,
+        "recall": 0.20871065114273393,
+        "f1-score": 0.3197885695407995,
+        "support": 2319.0
+      },
+      "accuracy": 0.23327112769928018,
+      "macro avg": {
+        "precision": 0.2637688850560302,
+        "recall": 0.3641484891404302,
+        "f1-score": 0.23284999209404064,
+        "support": 3751.0
+      },
+      "weighted avg": {
+        "precision": 0.4834381753470428,
+        "recall": 0.23327112769928018,
+        "f1-score": 0.26866010499935644,
+        "support": 3751.0
+      }
+    },
+    "log_loss": 1.4147204572894216
+  }
+}
