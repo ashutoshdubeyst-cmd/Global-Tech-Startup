@@ -1,0 +1,101 @@
+{
+  "manifest_version": 1,
+  "created_at_utc": "2026-08-13T17:04:06.039907+00:00",
+  "source_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\interim\\global_tech_startups_2026_cleaned.csv",
+  "target_column": "acquisition_status",
+  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.joblib",
+  "model_type": "logistic_regression",
+  "random_state": 42,
+  "feature_build_config": {
+    "drop_columns": [
+      "company_id"
+    ],
+    "date_columns": [],
+    "keep_date_columns": false,
+    "age_from_year_columns": [
+      "founding_year"
+    ],
+    "reference_year": 2026,
+    "log_columns": [
+      "total_funding_usd_millions",
+      "valuation_usd_millions",
+      "revenue_arr_millions"
+    ],
+    "ratio_features": [
+      "funding_per_employee=total_funding_usd_millions/current_headcount_2026",
+      "valuation_to_revenue=valuation_usd_millions/revenue_arr_millions"
+    ]
+  },
+  "expected_feature_columns": [
+    "domain",
+    "founding_year",
+    "country",
+    "city",
+    "funding_stage",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "investor_tier",
+    "ai_adoption_level",
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue"
+  ],
+  "numeric_columns": [
+    "founding_year",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "founding_year_age",
+    "total_funding_usd_millions_log1p",
+    "valuation_usd_millions_log1p",
+    "revenue_arr_millions_log1p",
+    "funding_per_employee",
+    "valuation_to_revenue"
+  ],
+  "categorical_columns": [
+    "domain",
+    "country",
+    "city",
+    "funding_stage",
+    "investor_tier",
+    "ai_adoption_level"
+  ],
+  "classes": [
+    "Acquired",
+    "Acquired (Fire Sale)",
+    "Closed",
+    "IPO",
+    "Independent"
+  ],
+  "processed_datasets": {
+    "train": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed\\train.csv",
+    "validation": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed\\validation.csv",
+    "test": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed\\test.csv",
+    "metadata": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed\\feature_metadata.json"
+  },
+  "training_metrics_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\metrics\\training_metrics.json",
+  "evaluation_metrics_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\metrics\\evaluation_metrics.json",
+  "validation_metrics": {
+    "accuracy": 0.23140495867768596,
+    "f1_weighted": 0.26797620198710015
+  },
+  "test_metrics": {
+    "accuracy": 0.23446252333955722,
+    "balanced_accuracy": 0.35931734157745454,
+    "f1_weighted": 0.27528814394253537
+  }
+}

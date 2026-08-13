@@ -1,0 +1,92 @@
+{
+  "created_at_utc": "2026-08-13T16:10:22.213590+00:00",
+  "dataset": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\interim\\global_tech_startups_2026_cleaned.csv",
+  "row_count": 25000,
+  "column_count": 17,
+  "columns": [
+    "company_id",
+    "domain",
+    "founding_year",
+    "country",
+    "city",
+    "funding_stage",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026",
+    "investor_tier",
+    "ai_adoption_level",
+    "acquisition_status"
+  ],
+  "dtypes": {
+    "company_id": "object",
+    "domain": "object",
+    "founding_year": "int64",
+    "country": "object",
+    "city": "object",
+    "funding_stage": "object",
+    "total_funding_usd_millions": "float64",
+    "valuation_usd_millions": "float64",
+    "revenue_arr_millions": "float64",
+    "monthly_burn_rate_millions": "float64",
+    "runway_months_2024": "float64",
+    "peak_headcount_2023": "int64",
+    "layoffs_2024_2025": "int64",
+    "current_headcount_2026": "int64",
+    "investor_tier": "object",
+    "ai_adoption_level": "object",
+    "acquisition_status": "object"
+  },
+  "missing_values": {
+    "company_id": 0,
+    "domain": 0,
+    "founding_year": 0,
+    "country": 0,
+    "city": 0,
+    "funding_stage": 0,
+    "total_funding_usd_millions": 0,
+    "valuation_usd_millions": 0,
+    "revenue_arr_millions": 0,
+    "monthly_burn_rate_millions": 0,
+    "runway_months_2024": 0,
+    "peak_headcount_2023": 0,
+    "layoffs_2024_2025": 0,
+    "current_headcount_2026": 0,
+    "investor_tier": 0,
+    "ai_adoption_level": 2592,
+    "acquisition_status": 0
+  },
+  "numeric_columns_visualized": [
+    "founding_year",
+    "total_funding_usd_millions",
+    "valuation_usd_millions",
+    "revenue_arr_millions",
+    "monthly_burn_rate_millions",
+    "runway_months_2024",
+    "peak_headcount_2023",
+    "layoffs_2024_2025",
+    "current_headcount_2026"
+  ],
+  "categorical_columns_visualized": [
+    "domain",
+    "country",
+    "city",
+    "funding_stage",
+    "investor_tier",
+    "ai_adoption_level"
+  ],
+  "charts": {
+    "target_distribution": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\figures\\target_distribution.png",
+    "missing_values": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\figures\\missing_values.png",
+    "numeric_distributions": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\figures\\numeric_distributions.png",
+    "correlation_heatmap": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\figures\\correlation_heatmap.png",
+    "categorical_distributions": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\figures\\categorical_distributions.png"
+  },
+  "warnings": [
+    "Skipped high-cardinality categorical column 'company_id' (24999 unique values)."
+  ]
+}

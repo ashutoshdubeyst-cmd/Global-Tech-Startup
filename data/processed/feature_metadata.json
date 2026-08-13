@@ -19,8 +19,7 @@
     ],
     "ratio_features": [
       "funding_per_employee=total_funding_usd_millions/current_headcount_2026",
-      "valuation_to_revenue=valuation_usd_millions/revenue_arr_millions",
-      "layoff_rate=layoffs_2024_2025/peak_headcount_2023"
+      "valuation_to_revenue=valuation_usd_millions/revenue_arr_millions"
     ],
     "train_fraction": 0.7,
     "validation_fraction": 0.15,
@@ -54,8 +53,7 @@
     "valuation_usd_millions_log1p",
     "revenue_arr_millions_log1p",
     "funding_per_employee",
-    "valuation_to_revenue",
-    "layoff_rate"
+    "valuation_to_revenue"
   ],
   "dtypes": {
     "domain": "object",
@@ -79,8 +77,7 @@
     "valuation_usd_millions_log1p": "float64",
     "revenue_arr_millions_log1p": "float64",
     "funding_per_employee": "float64",
-    "valuation_to_revenue": "float64",
-    "layoff_rate": "float64"
+    "valuation_to_revenue": "float64"
   },
   "engineered_features": [
     "founding_year_age",
@@ -88,8 +85,7 @@
     "valuation_usd_millions_log1p",
     "revenue_arr_millions_log1p",
     "funding_per_employee",
-    "valuation_to_revenue",
-    "layoff_rate"
+    "valuation_to_revenue"
   ],
   "split_rows": {
     "train": 17500,

@@ -39,3 +39,99 @@ FileNotFoundError: Cleaned dataset was not found: C:\Users\ashut\OneDrive\Deskto
 2026-08-13 09:01:58 | INFO     | __main__ | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
 2026-08-13 09:01:58 | INFO     | __main__ | predict.py:168 | Prediction completed: rows=3749, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
 2026-08-13 09:01:58 | INFO     | __main__ | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-13 21:40:17 | INFO     | __main__ | visualization.py:467 | Starting visualization: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:560 | Saved target_distribution chart to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\target_distribution.png
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:560 | Saved missing_values chart to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\missing_values.png
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:560 | Saved numeric_distributions chart to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\numeric_distributions.png
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:560 | Saved correlation_heatmap chart to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\correlation_heatmap.png
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:560 | Saved categorical_distributions chart to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\categorical_distributions.png
+2026-08-13 21:40:22 | WARNING  | __main__ | visualization.py:562 | Visualization warning: Skipped high-cardinality categorical column 'company_id' (24999 unique values).
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:573 | Saved dataset overview to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\figures\dataset_overview.json
+2026-08-13 21:40:22 | INFO     | __main__ | visualization.py:574 | Visualization completed: rows=25000, columns=17, charts=5
+2026-08-13 22:34:03 | INFO     | __main__ | training_pipeline.py:321 | Starting training pipeline: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, target=acquisition_status
+2026-08-13 22:34:03 | INFO     | __main__ | training_pipeline.py:347 | Training pipeline stage started: feature building
+2026-08-13 22:34:03 | INFO     | src.churn_model.features.build_features | build_features.py:457 | Starting feature building: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed
+2026-08-13 22:34:03 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-13 22:34:04 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved train split: rows=17500, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv
+2026-08-13 22:34:04 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved validation split: rows=3751, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\validation.csv
+2026-08-13 22:34:04 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved test split: rows=3749, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-13 22:34:04 | INFO     | src.churn_model.features.build_features | build_features.py:532 | Saved feature metadata to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\feature_metadata.json
+2026-08-13 22:34:04 | WARNING  | src.churn_model.features.build_features | build_features.py:535 | Feature-building warning: Ratio 'funding_per_employee' had 11 zero denominators; those results are missing.
+2026-08-13 22:34:04 | INFO     | src.churn_model.features.build_features | build_features.py:549 | Feature building completed: rows=25000, columns=22, features_created=6
+2026-08-13 22:34:04 | INFO     | __main__ | training_pipeline.py:349 | Training pipeline stage completed: feature building
+2026-08-13 22:34:04 | INFO     | __main__ | training_pipeline.py:360 | Training pipeline stage started: model training
+2026-08-13 22:34:04 | INFO     | src.churn_model.models.train | train.py:383 | Starting model training: train=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv, target=acquisition_status, model_type=logistic_regression
+2026-08-13 22:34:04 | INFO     | src.churn_model.models.train | train.py:457 | Fitting model with 17500 rows, 15 numeric features, and 6 categorical features
+2026-08-13 22:34:05 | INFO     | src.churn_model.models.train | train.py:536 | Saved trained model to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib
+2026-08-13 22:34:05 | INFO     | src.churn_model.models.train | train.py:537 | Saved training metrics to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\training_metrics.json
+2026-08-13 22:34:05 | INFO     | src.churn_model.models.train | train.py:538 | Model training completed: accuracy=0.2314, weighted_f1=0.2680
+2026-08-13 22:34:05 | INFO     | __main__ | training_pipeline.py:376 | Training pipeline stage completed: model training
+2026-08-13 22:34:05 | INFO     | __main__ | training_pipeline.py:379 | Training pipeline stage started: test evaluation
+2026-08-13 22:34:05 | INFO     | src.churn_model.models.evaluate | evaluate.py:91 | Starting model evaluation: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-13 22:34:06 | INFO     | src.churn_model.models.evaluate | evaluate.py:154 | Saved evaluation report to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\evaluation_metrics.json
+2026-08-13 22:34:06 | INFO     | src.churn_model.models.evaluate | evaluate.py:155 | Model evaluation completed: rows=3749, accuracy=0.2345, balanced_accuracy=0.3593, weighted_f1=0.2753
+2026-08-13 22:34:06 | INFO     | __main__ | training_pipeline.py:388 | Training pipeline stage completed: test evaluation
+2026-08-13 22:34:06 | INFO     | __main__ | training_pipeline.py:391 | Training pipeline stage started: manifest creation
+2026-08-13 22:34:06 | INFO     | __main__ | training_pipeline.py:402 | Saved training-pipeline manifest to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\training_pipeline_manifest.json
+2026-08-13 22:34:06 | INFO     | __main__ | training_pipeline.py:403 | Training pipeline stage completed: manifest creation
+2026-08-13 22:34:06 | INFO     | __main__ | training_pipeline.py:414 | Training pipeline completed: validation_accuracy=0.2314, test_accuracy=0.2345, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib
+2026-08-13 22:35:33 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\new_startups_cleaned.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=auto
+2026-08-13 22:37:37 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=cleaned
+2026-08-13 22:37:37 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-13 22:37:38 | INFO     | __main__ | inference_pipeline.py:339 | Inference pipeline stage completed: artifact loading; resolved_stage=cleaned
+2026-08-13 22:37:38 | INFO     | __main__ | inference_pipeline.py:351 | Inference pipeline stage started: feature building
+2026-08-13 22:37:38 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-13 22:37:38 | INFO     | __main__ | inference_pipeline.py:301 | Saved inference features: rows=25000, columns=23, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\inference_features.csv
+2026-08-13 22:37:38 | WARNING  | __main__ | inference_pipeline.py:364 | Inference feature warning: Ratio 'funding_per_employee' had 11 zero denominators; those results are missing.
+2026-08-13 22:37:38 | INFO     | __main__ | inference_pipeline.py:365 | Inference pipeline stage completed: feature building
+2026-08-13 22:37:38 | INFO     | __main__ | inference_pipeline.py:368 | Inference pipeline stage started: prediction
+2026-08-13 22:37:38 | INFO     | src.churn_model.models.predict | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\inference_features.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:37:39 | INFO     | src.churn_model.models.predict | predict.py:168 | Prediction completed: rows=25000, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:37:39 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-13 22:37:39 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
+2026-08-13 22:37:39 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=25000, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=processed
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:339 | Inference pipeline stage completed: artifact loading; resolved_stage=processed
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:368 | Inference pipeline stage started: prediction
+2026-08-13 22:37:55 | INFO     | src.churn_model.models.predict | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:37:55 | INFO     | src.churn_model.models.predict | predict.py:168 | Prediction completed: rows=3749, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:37:55 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
+2026-08-13 22:37:55 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=3749, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:38:19 | INFO     | __main__ | cleaning.py:328 | Starting data cleaning: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\new_startups.csv, destination=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\new_startups_cleaned.csv
+2026-08-13 22:38:19 | ERROR    | __main__ | cleaning.py:452 | Data cleaning failed.
+Traceback (most recent call last):
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\data\cleaning.py", line 450, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\data\cleaning.py", line 433, in main
+    report = clean_data(config)
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\data\cleaning.py", line 335, in clean_data
+    raise FileNotFoundError(f"Raw dataset was not found: {source}")
+FileNotFoundError: Raw dataset was not found: C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\new_startups.csv
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=processed
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:339 | Inference pipeline stage completed: artifact loading; resolved_stage=processed
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:368 | Inference pipeline stage started: prediction
+2026-08-13 22:39:40 | INFO     | src.churn_model.models.predict | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:39:40 | INFO     | src.churn_model.models.predict | predict.py:168 | Prediction completed: rows=3749, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:39:40 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
+2026-08-13 22:39:40 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=3749, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:39:50 | INFO     | __main__ | cleaning.py:328 | Starting data cleaning: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv, destination=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\new_startups_cleaned.csv
+2026-08-13 22:39:50 | INFO     | __main__ | cleaning.py:363 | Data cleaning completed: rows=25000, columns=17, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\new_startups_cleaned.csv
+2026-08-13 22:40:04 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\new_startups_cleaned.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=cleaned
+2026-08-13 22:40:04 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-13 22:40:04 | INFO     | __main__ | inference_pipeline.py:339 | Inference pipeline stage completed: artifact loading; resolved_stage=cleaned
+2026-08-13 22:40:04 | INFO     | __main__ | inference_pipeline.py:351 | Inference pipeline stage started: feature building
+2026-08-13 22:40:04 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-13 22:40:05 | INFO     | __main__ | inference_pipeline.py:301 | Saved inference features: rows=25000, columns=23, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\inference_features.csv
+2026-08-13 22:40:05 | WARNING  | __main__ | inference_pipeline.py:364 | Inference feature warning: Ratio 'funding_per_employee' had 11 zero denominators; those results are missing.
+2026-08-13 22:40:05 | INFO     | __main__ | inference_pipeline.py:365 | Inference pipeline stage completed: feature building
+2026-08-13 22:40:05 | INFO     | __main__ | inference_pipeline.py:368 | Inference pipeline stage started: prediction
+2026-08-13 22:40:05 | INFO     | src.churn_model.models.predict | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\inference_features.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:40:06 | INFO     | src.churn_model.models.predict | predict.py:168 | Prediction completed: rows=25000, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-13 22:40:06 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-13 22:40:06 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
+2026-08-13 22:40:06 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=25000, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
