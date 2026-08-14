@@ -1,0 +1,4 @@
+company_id,domain,founding_year,country,city,funding_stage,total_funding_usd_millions,valuation_usd_millions,revenue_arr_millions,monthly_burn_rate_millions,runway_months_2024,peak_headcount_2023,layoffs_2024_2025,current_headcount_2026,investor_tier,ai_adoption_level
+N001,Quantum,2024,Japan,Tokyo,Seed,0.4,2.0,0.1,0.10,8,6,1,5,Tier 3
+N002,AI,2019,India,Bengaluru,Series B,16.0,65.0,7.0,0.55,15,92,10,82,Tier 1
+N003,Cloud,2023,Brazil,Sao Paulo,Seed,0.7,3.2,0.2,0.13,10,10,2,8,Tier 3,

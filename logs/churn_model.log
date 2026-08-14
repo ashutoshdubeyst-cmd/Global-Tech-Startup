@@ -135,3 +135,82 @@ FileNotFoundError: Raw dataset was not found: C:\Users\ashut\OneDrive\Desktop\Gl
 2026-08-13 22:40:06 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
 2026-08-13 22:40:06 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
 2026-08-13 22:40:06 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=25000, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv
+2026-08-14 12:34:17 | INFO     | __main__ | validation.py:187 | Starting data validation for C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv
+2026-08-14 12:34:17 | INFO     | __main__ | validation.py:205 | Validated 25000 rows and 17 columns in C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv
+2026-08-14 12:34:19 | INFO     | __main__ | cleaning.py:328 | Starting data cleaning: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv, destination=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-14 12:34:19 | INFO     | __main__ | cleaning.py:363 | Data cleaning completed: rows=25000, columns=17, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-14 12:34:21 | INFO     | __main__ | validation.py:187 | Starting data validation for C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-14 12:34:21 | INFO     | __main__ | validation.py:205 | Validated 25000 rows and 17 columns in C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv
+2026-08-14 12:34:54 | INFO     | __main__ | training_pipeline.py:321 | Starting training pipeline: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, target=acquisition_status
+2026-08-14 12:34:54 | INFO     | __main__ | training_pipeline.py:347 | Training pipeline stage started: feature building
+2026-08-14 12:34:54 | INFO     | src.churn_model.features.build_features | build_features.py:457 | Starting feature building: source=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\interim\global_tech_startups_2026_cleaned.csv, output_dir=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved train split: rows=17500, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved validation split: rows=3751, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\validation.csv
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:504 | Saved test split: rows=3749, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:532 | Saved feature metadata to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\feature_metadata.json
+2026-08-14 12:34:55 | WARNING  | src.churn_model.features.build_features | build_features.py:535 | Feature-building warning: Ratio 'funding_per_employee' had 11 zero denominators; those results are missing.
+2026-08-14 12:34:55 | INFO     | src.churn_model.features.build_features | build_features.py:549 | Feature building completed: rows=25000, columns=22, features_created=6
+2026-08-14 12:34:55 | INFO     | __main__ | training_pipeline.py:349 | Training pipeline stage completed: feature building
+2026-08-14 12:34:55 | INFO     | __main__ | training_pipeline.py:360 | Training pipeline stage started: model training
+2026-08-14 12:34:55 | INFO     | src.churn_model.models.train | train.py:383 | Starting model training: train=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\train.csv, target=acquisition_status, model_type=logistic_regression
+2026-08-14 12:34:55 | INFO     | src.churn_model.models.train | train.py:457 | Fitting model with 17500 rows, 15 numeric features, and 6 categorical features
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.train | train.py:536 | Saved trained model to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.pkl
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.train | train.py:537 | Saved training metrics to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\training_metrics.json
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.train | train.py:538 | Model training completed: accuracy=0.2314, weighted_f1=0.2681
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:376 | Training pipeline stage completed: model training
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:379 | Training pipeline stage started: test evaluation
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.evaluate | evaluate.py:91 | Starting model evaluation: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.pkl, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\test.csv
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.evaluate | evaluate.py:154 | Saved evaluation report to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\metrics\evaluation_metrics.json
+2026-08-14 12:34:57 | INFO     | src.churn_model.models.evaluate | evaluate.py:155 | Model evaluation completed: rows=3749, accuracy=0.2350, balanced_accuracy=0.3612, weighted_f1=0.2760
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:388 | Training pipeline stage completed: test evaluation
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:391 | Training pipeline stage started: manifest creation
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:402 | Saved training-pipeline manifest to C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\training_pipeline_manifest.json
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:403 | Training pipeline stage completed: manifest creation
+2026-08-14 12:34:57 | INFO     | __main__ | training_pipeline.py:414 | Training pipeline completed: validation_accuracy=0.2314, test_accuracy=0.2350, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.pkl
+2026-08-14 12:41:00 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\raw\global_tech_startups_2026.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.joblib, requested_stage=cleaned
+2026-08-14 12:41:00 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator SimpleImputer from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator Pipeline from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator OneHotEncoder from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator ColumnTransformer from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | WARNING  | py.warnings | warnings.py:112 | C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator LogisticRegression from version 1.7.2 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+2026-08-14 12:41:00 | ERROR    | __main__ | inference_pipeline.py:382 | Inference pipeline failed during stage: artifact loading
+Traceback (most recent call last):
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\pipelines\inference_pipeline.py", line 338, in run_inference_pipeline
+    _validate_paths(config, resolved_stage)
+  File "C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\src\churn_model\pipelines\inference_pipeline.py", line 158, in _validate_paths
+    raise FileExistsError(
+FileExistsError: Inference outputs already exist: C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\predictions.csv, C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\inference_features.csv. Use --overwrite to replace them.
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:317 | Starting inference pipeline: data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\tests\test_data\new_startups_cleaned.csv, model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.pkl, requested_stage=cleaned
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:328 | Inference pipeline stage started: artifact loading
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:339 | Inference pipeline stage completed: artifact loading; resolved_stage=cleaned
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:351 | Inference pipeline stage started: feature building
+2026-08-14 12:42:58 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:301 | Saved inference features: rows=3, columns=22, path=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\sample_inference_features_20260814.csv
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:365 | Inference pipeline stage completed: feature building
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:368 | Inference pipeline stage started: prediction
+2026-08-14 12:42:58 | INFO     | src.churn_model.models.predict | predict.py:109 | Starting prediction: model=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\models\startup_classifier.pkl, data=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\data\processed\sample_inference_features_20260814.csv, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\sample_predictions_20260814.csv
+2026-08-14 12:42:58 | INFO     | src.churn_model.models.predict | predict.py:168 | Prediction completed: rows=3, output=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\sample_predictions_20260814.csv
+2026-08-14 12:42:58 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
+2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=3, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\sample_predictions_20260814.csv

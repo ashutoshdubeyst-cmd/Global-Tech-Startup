@@ -1,5 +1,5 @@
 {
-  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.joblib",
+  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.pkl",
   "model_type": "logistic_regression",
   "target_column": "acquisition_status",
   "training_rows": 17500,
@@ -55,10 +55,10 @@
   ],
   "metrics": {
     "accuracy": 0.23140495867768596,
-    "balanced_accuracy": 0.35402395108670076,
-    "precision_weighted": 0.49996147763212423,
+    "balanced_accuracy": 0.3537810237795532,
+    "precision_weighted": 0.4996556242611307,
     "recall_weighted": 0.23140495867768596,
-    "f1_weighted": 0.26797620198710015,
+    "f1_weighted": 0.2681215079841845,
     "labels": [
       "Acquired",
       "Acquired (Fire Sale)",
@@ -68,9 +68,9 @@
     ],
     "confusion_matrix": [
       [
-        102,
+        101,
         28,
-        62,
+        63,
         129,
         75
       ],
@@ -82,32 +82,32 @@
         2
       ],
       [
-        136,
-        247,
-        113,
-        162,
+        135,
+        246,
+        114,
+        163,
         105
       ],
       [
-        29,
+        28,
         5,
         15,
         30,
-        23
+        24
       ],
       [
-        643,
-        120,
-        324,
-        757,
+        641,
+        121,
+        322,
+        760,
         475
       ]
     ],
     "classification_report": {
       "Acquired": {
-        "precision": 0.11208791208791209,
-        "recall": 0.25757575757575757,
-        "f1-score": 0.1562021439509954,
+        "precision": 0.11160220994475138,
+        "recall": 0.255050505050505,
+        "f1-score": 0.15526518063028438,
         "support": 396.0
       },
       "Acquired (Fire Sale)": {
@@ -117,37 +117,37 @@
         "support": 171.0
       },
       "Closed": {
-        "precision": 0.212406015037594,
-        "recall": 0.14809960681520315,
-        "f1-score": 0.1745173745173745,
+        "precision": 0.21428571428571427,
+        "recall": 0.14941022280471822,
+        "f1-score": 0.17606177606177606,
         "support": 763.0
       },
       "IPO": {
-        "precision": 0.027752081406105456,
+        "precision": 0.027649769585253458,
         "recall": 0.29411764705882354,
-        "f1-score": 0.0507185122569738,
+        "f1-score": 0.05054759898904802,
         "support": 102.0
       },
       "Independent": {
-        "precision": 0.6985294117647058,
+        "precision": 0.697503671071953,
         "recall": 0.20482966796032773,
-        "f1-score": 0.3167722574191397,
+        "f1-score": 0.31666666666666665,
         "support": 2319.0
       },
       "accuracy": 0.23140495867768596,
       "macro avg": {
-        "precision": 0.26416968259940943,
-        "recall": 0.35402395108670076,
-        "f1-score": 0.22197863621025968,
+        "precision": 0.2642228715176804,
+        "recall": 0.3537810237795532,
+        "f1-score": 0.22204482305091805,
         "support": 3751.0
       },
       "weighted avg": {
-        "precision": 0.49996147763212423,
+        "precision": 0.4996556242611307,
         "recall": 0.23140495867768596,
-        "f1-score": 0.26797620198710015,
+        "f1-score": 0.2681215079841845,
         "support": 3751.0
       }
     },
-    "log_loss": 1.4559736688945226
+    "log_loss": 1.4559287867087556
   }
 }

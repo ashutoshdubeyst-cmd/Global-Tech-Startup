@@ -1,0 +1,4 @@
+domain,founding_year,country,city,funding_stage,total_funding_usd_millions,valuation_usd_millions,revenue_arr_millions,monthly_burn_rate_millions,runway_months_2024,peak_headcount_2023,layoffs_2024_2025,current_headcount_2026,investor_tier,ai_adoption_level,founding_year_age,total_funding_usd_millions_log1p,valuation_usd_millions_log1p,revenue_arr_millions_log1p,funding_per_employee,valuation_to_revenue,company_id
+Quantum,2024,Japan,Tokyo,Seed,0.4,2.0,0.1,0.1,8,6,1,5,Tier 3,,2,0.33647223662121295,1.0986122886681098,0.09531017980432487,0.08,20.0,N001
+AI,2019,India,Bengaluru,Series B,16.0,65.0,7.0,0.55,15,92,10,82,Tier 1,,7,2.833213344056216,4.189654742026425,2.0794415416798357,0.1951219512195122,9.285714285714286,N002
+Cloud,2023,Brazil,Sao Paulo,Seed,0.7,3.2,0.2,0.13,10,10,2,8,Tier 3,,3,0.5306282510621704,1.4350845252893227,0.18232155679395465,0.0875,16.0,N003

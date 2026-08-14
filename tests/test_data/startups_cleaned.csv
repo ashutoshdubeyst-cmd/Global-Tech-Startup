@@ -1,0 +1,25 @@
+company_id,domain,founding_year,country,city,funding_stage,total_funding_usd_millions,valuation_usd_millions,revenue_arr_millions,monthly_burn_rate_millions,runway_months_2024,peak_headcount_2023,layoffs_2024_2025,current_headcount_2026,investor_tier,ai_adoption_level,acquisition_status
+S001,AI,2016,India,Bengaluru,Series C,32.0,120.0,14.0,0.9,18,180,20,160,Tier 1,High,Acquired
+S002,Cloud,2022,USA,Austin,Seed,0.8,4.0,0.2,0.15,12,10,2,8,Tier 3,Low,Independent
+S003,Fintech,2017,UK,London,Series B,18.0,72.0,8.0,0.6,16,110,15,95,Tier 1,High,Acquired
+S004,Health,2021,India,Delhi,Seed,1.1,5.0,0.4,0.18,11,15,3,12,Tier 3,Medium,Independent
+S005,Security,2015,Germany,Berlin,Series C,40.0,155.0,19.0,1.1,20,235,25,210,Tier 1,High,Acquired
+S006,Commerce,2020,France,Paris,Series A,3.0,14.0,1.1,0.3,13,35,7,28,Tier 2,Medium,Independent
+S007,Robotics,2018,USA,Boston,Series B,21.0,85.0,9.5,0.7,17,125,15,110,Tier 1,High,Acquired
+S008,Energy,2023,India,Mumbai,Seed,0.5,2.5,0.1,0.12,9,8,2,6,Tier 3,,Independent
+S009,Biotech,2016,France,Lyon,Series C,36.0,140.0,16.0,1.0,19,200,25,175,Tier 1,High,Acquired
+S010,Data,2021,UK,Manchester,Series A,2.5,11.0,0.8,0.25,12,28,6,22,Tier 2,Low,Independent
+S011,AI,2017,India,Hyderabad,Series B,24.0,95.0,11.0,0.75,18,145,20,125,Tier 1,High,Acquired
+S012,Cloud,2022,Germany,Munich,Seed,0.9,4.5,0.3,0.16,10,12,3,9,Tier 3,Medium,Independent
+S013,Fintech,2015,USA,New York,Series C,45.0,180.0,22.0,1.2,21,260,30,230,Tier 1,High,Acquired
+S014,Health,2020,India,Pune,Series A,3.5,16.0,1.4,0.32,14,38,7,31,Tier 2,Medium,Independent
+S015,Security,2018,UK,London,Series B,20.0,80.0,9.0,0.65,17,120,15,105,Tier 1,High,Acquired
+S016,Commerce,2023,France,Paris,Seed,0.6,3.0,0.2,0.13,9,9,2,7,Tier 3,Low,Independent
+S017,Robotics,2016,Germany,Berlin,Series C,38.0,150.0,17.5,1.05,20,215,25,190,Tier 1,High,Acquired
+S018,Energy,2021,USA,Denver,Series A,2.8,13.0,1.0,0.28,13,31,6,25,Tier 2,,Independent
+S019,Biotech,2017,India,Bengaluru,Series B,22.0,88.0,10.0,0.7,17,138,20,118,Tier 1,High,Acquired
+S020,Data,2022,UK,Bristol,Seed,1.0,5.0,0.3,0.17,11,13,3,10,Tier 3,Medium,Independent
+S021,AI,2015,France,Paris,Series C,42.0,165.0,20.0,1.15,21,245,25,220,Tier 1,High,Acquired
+S022,Cloud,2020,Germany,Hamburg,Series A,3.2,15.0,1.2,0.3,14,36,7,29,Tier 2,Medium,Independent
+S023,Fintech,2018,USA,Chicago,Series B,19.0,76.0,8.5,0.62,16,115,15,100,Tier 1,High,Acquired
+S024,Health,2023,India,Chennai,Seed,0.7,3.5,0.2,0.14,10,10,2,8,Tier 3,Low,Independent

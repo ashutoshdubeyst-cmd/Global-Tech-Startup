@@ -1,6 +1,6 @@
 {
   "config": {
-    "source_path": "data\\interim\\global_tech_startups_2026_cleaned.csv",
+    "source_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\interim\\global_tech_startups_2026_cleaned.csv",
     "output_dir": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\processed",
     "target_column": "acquisition_status",
     "drop_columns": [

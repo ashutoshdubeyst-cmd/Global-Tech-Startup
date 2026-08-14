@@ -1,9 +1,9 @@
 {
   "manifest_version": 1,
-  "created_at_utc": "2026-08-13T17:04:06.039907+00:00",
+  "created_at_utc": "2026-08-14T07:04:57.269607+00:00",
   "source_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\data\\interim\\global_tech_startups_2026_cleaned.csv",
   "target_column": "acquisition_status",
-  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.joblib",
+  "model_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\models\\startup_classifier.pkl",
   "model_type": "logistic_regression",
   "random_state": 42,
   "feature_build_config": {
@@ -91,11 +91,11 @@
   "evaluation_metrics_path": "C:\\Users\\ashut\\OneDrive\\Desktop\\Global-Tech-Startup\\reports\\metrics\\evaluation_metrics.json",
   "validation_metrics": {
     "accuracy": 0.23140495867768596,
-    "f1_weighted": 0.26797620198710015
+    "f1_weighted": 0.2681215079841845
   },
   "test_metrics": {
-    "accuracy": 0.23446252333955722,
-    "balanced_accuracy": 0.35931734157745454,
-    "f1_weighted": 0.27528814394253537
+    "accuracy": 0.23499599893304882,
+    "balanced_accuracy": 0.3611885652472028,
+    "f1_weighted": 0.2760094363196098
   }
 }

@@ -1,1 +1,9 @@
+tests/.pytest_tmp/
+venv/
+.venv/
+tests/.pytest_tmp/
+tests/.pytest-run-*/
+venv/
+tests/.pytest-run-*/
+work/pytest_tmp/
 venv/
