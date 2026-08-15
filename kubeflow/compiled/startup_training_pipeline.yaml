@@ -1,0 +1,1706 @@
+# PIPELINE DEFINITION
+# Name: startup-acquisition-training
+# Description: Validate, clean, feature engineer, train, evaluate, and quality gate the startup acquisition classifier.
+# Inputs:
+#    age_from_year_columns: list [Default: ['founding_year']]
+#    allowed_target_values: list [Default: ['Acquired', 'Independent']]
+#    approval_metric: str [Default: 'f1_weighted']
+#    class_weight: str [Default: 'balanced']
+#    cleaning_date_columns: list [Default: []]
+#    drop_columns: list [Default: ['company_id']]
+#    drop_duplicate_rows: bool [Default: True]
+#    drop_empty_rows: bool [Default: True]
+#    fail_on_duplicate_rows: bool [Default: False]
+#    feature_date_columns: list [Default: []]
+#    keep_date_columns: bool [Default: False]
+#    log_columns: list [Default: ['total_funding_usd_millions', 'valuation_usd_millions', 'revenue_arr_millions']]
+#    max_iter: int [Default: 2000.0]
+#    max_missing_fraction: float [Default: 1.0]
+#    minimum_approval_metric: float [Default: 0.7]
+#    missing_markers: list [Default: ['', 'n/a', 'null', 'none', 'nan']]
+#    model_type: str [Default: 'logistic_regression']
+#    n_estimators: int [Default: 300.0]
+#    numeric_columns: list [Default: ['founding_year', 'total_funding_usd_millions', 'valuation_usd_millions', 'revenue_arr_millions', 'monthly_burn_rate_millions', 'runway_months_2024', 'peak_headcount_2023', 'layoffs_2024_2025', 'current_headcount_2026']]
+#    output_format: str [Default: 'parquet']
+#    random_state: int [Default: 42.0]
+#    ratio_features: list [Default: ['funding_per_employee=total_funding_usd_millions/current_headcount_2026', 'valuation_to_revenue=valuation_usd_millions/revenue_arr_millions']]
+#    reference_year: int [Default: 2026.0]
+#    required_columns: list [Default: ['company_id', 'domain', 'founding_year', 'country', 'city', 'funding_stage', 'total_funding_usd_millions', 'valuation_usd_millions', 'revenue_arr_millions', 'monthly_burn_rate_millions', 'runway_months_2024', 'peak_headcount_2023', 'layoffs_2024_2025', 'current_headcount_2026', 'investor_tier', 'ai_adoption_level']]
+#    source_dataset_uri: str
+#    source_format: str [Default: 'csv']
+#    stratify: bool [Default: True]
+#    target_column: str [Default: 'acquisition_status']
+#    test_fraction: float [Default: 0.15]
+#    train_fraction: float [Default: 0.7]
+#    validation_fraction: float [Default: 0.15]
+# Outputs:
+#    approval_decision: system.Artifact
+#    candidate_model: system.Model
+#    evaluation_metrics: system.Metrics
+#    manifest: system.Artifact
+components:
+  comp-build-feature-splits:
+    executorLabel: exec-build-feature-splits
+    inputDefinitions:
+      artifacts:
+        cleaned_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        age_from_year_columns:
+          parameterType: LIST
+        date_columns:
+          parameterType: LIST
+        drop_columns:
+          parameterType: LIST
+        input_format:
+          parameterType: STRING
+        keep_date_columns:
+          parameterType: BOOLEAN
+        log_columns:
+          parameterType: LIST
+        output_format:
+          parameterType: STRING
+        random_state:
+          parameterType: NUMBER_INTEGER
+        ratio_features:
+          parameterType: LIST
+        reference_year:
+          parameterType: NUMBER_INTEGER
+        stratify:
+          parameterType: BOOLEAN
+        target_column:
+          parameterType: STRING
+        test_fraction:
+          parameterType: NUMBER_DOUBLE
+        train_fraction:
+          parameterType: NUMBER_DOUBLE
+        validation_fraction:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        feature_metadata:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+        test_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        train_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        validation_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        test_rows:
+          parameterType: NUMBER_INTEGER
+        train_rows:
+          parameterType: NUMBER_INTEGER
+        validation_rows:
+          parameterType: NUMBER_INTEGER
+  comp-clean-dataset:
+    executorLabel: exec-clean-dataset
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        date_columns:
+          parameterType: LIST
+        drop_duplicate_rows:
+          parameterType: BOOLEAN
+        drop_empty_rows:
+          parameterType: BOOLEAN
+        input_format:
+          parameterType: STRING
+        missing_markers:
+          parameterType: LIST
+        numeric_columns:
+          parameterType: LIST
+        output_format:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        cleaned_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        cleaning_report:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        input_rows:
+          parameterType: NUMBER_INTEGER
+        output_rows:
+          parameterType: NUMBER_INTEGER
+  comp-condition-2:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--quality-gate-approval_decision:
+            artifactSelectors:
+            - outputArtifactKey: approval_decision
+              producerSubtask: quality-gate
+      tasks:
+        quality-gate:
+          cachingOptions:
+            enableCache: true
+          componentRef:
+            name: comp-quality-gate
+          inputs:
+            parameters:
+              metric_name:
+                componentInputParameter: pipelinechannel--approval_metric
+              metric_value:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_accuracy
+              minimum_value:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: quality-gate
+    inputDefinitions:
+      parameters:
+        pipelinechannel--approval_metric:
+          parameterType: STRING
+        pipelinechannel--evaluate-classifier-test_accuracy:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--minimum_approval_metric:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--quality-gate-approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-3:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--quality-gate-2-approval_decision:
+            artifactSelectors:
+            - outputArtifactKey: approval_decision
+              producerSubtask: quality-gate-2
+      tasks:
+        quality-gate-2:
+          cachingOptions:
+            enableCache: true
+          componentRef:
+            name: comp-quality-gate-2
+          inputs:
+            parameters:
+              metric_name:
+                componentInputParameter: pipelinechannel--approval_metric
+              metric_value:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_balanced_accuracy
+              minimum_value:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: quality-gate-2
+    inputDefinitions:
+      parameters:
+        pipelinechannel--approval_metric:
+          parameterType: STRING
+        pipelinechannel--evaluate-classifier-test_balanced_accuracy:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--minimum_approval_metric:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--quality-gate-2-approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-4:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--quality-gate-3-approval_decision:
+            artifactSelectors:
+            - outputArtifactKey: approval_decision
+              producerSubtask: quality-gate-3
+      tasks:
+        quality-gate-3:
+          cachingOptions:
+            enableCache: true
+          componentRef:
+            name: comp-quality-gate-3
+          inputs:
+            parameters:
+              metric_name:
+                componentInputParameter: pipelinechannel--approval_metric
+              metric_value:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_f1_weighted
+              minimum_value:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: quality-gate-3
+    inputDefinitions:
+      parameters:
+        pipelinechannel--approval_metric:
+          parameterType: STRING
+        pipelinechannel--evaluate-classifier-test_f1_weighted:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--minimum_approval_metric:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--quality-gate-3-approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-6:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--package-manifest-manifest:
+            artifactSelectors:
+            - outputArtifactKey: manifest
+              producerSubtask: package-manifest
+      tasks:
+        package-manifest:
+          cachingOptions:
+            enableCache: true
+          componentRef:
+            name: comp-package-manifest
+          inputs:
+            artifacts:
+              candidate_model:
+                componentInputArtifact: pipelinechannel--train-classifier-candidate_model
+              evaluation_metrics:
+                componentInputArtifact: pipelinechannel--evaluate-classifier-evaluation_metrics
+              training_metrics:
+                componentInputArtifact: pipelinechannel--train-classifier-training_metrics
+            parameters:
+              age_from_year_columns:
+                componentInputParameter: pipelinechannel--age_from_year_columns
+              date_columns:
+                componentInputParameter: pipelinechannel--feature_date_columns
+              drop_columns:
+                componentInputParameter: pipelinechannel--drop_columns
+              keep_date_columns:
+                componentInputParameter: pipelinechannel--keep_date_columns
+              log_columns:
+                componentInputParameter: pipelinechannel--log_columns
+              model_filename:
+                runtimeValue:
+                  constant: startup_classifier.pkl
+              ratio_features:
+                componentInputParameter: pipelinechannel--ratio_features
+              reference_year:
+                componentInputParameter: pipelinechannel--reference_year
+          taskInfo:
+            name: Package approved model manifest
+    inputDefinitions:
+      artifacts:
+        pipelinechannel--evaluate-classifier-evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        pipelinechannel--age_from_year_columns:
+          parameterType: LIST
+        pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+          parameterType: BOOLEAN
+        pipelinechannel--drop_columns:
+          parameterType: LIST
+        pipelinechannel--feature_date_columns:
+          parameterType: LIST
+        pipelinechannel--keep_date_columns:
+          parameterType: BOOLEAN
+        pipelinechannel--log_columns:
+          parameterType: LIST
+        pipelinechannel--ratio_features:
+          parameterType: LIST
+        pipelinechannel--reference_year:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--package-manifest-manifest:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-7:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--package-manifest-2-manifest:
+            artifactSelectors:
+            - outputArtifactKey: manifest
+              producerSubtask: package-manifest-2
+      tasks:
+        package-manifest-2:
+          cachingOptions:
+            enableCache: true
+          componentRef:
+            name: comp-package-manifest-2
+          inputs:
+            artifacts:
+              candidate_model:
+                componentInputArtifact: pipelinechannel--train-classifier-candidate_model
+              evaluation_metrics:
+                componentInputArtifact: pipelinechannel--evaluate-classifier-evaluation_metrics
+              training_metrics:
+                componentInputArtifact: pipelinechannel--train-classifier-training_metrics
+            parameters:
+              age_from_year_columns:
+                componentInputParameter: pipelinechannel--age_from_year_columns
+              date_columns:
+                componentInputParameter: pipelinechannel--feature_date_columns
+              drop_columns:
+                componentInputParameter: pipelinechannel--drop_columns
+              keep_date_columns:
+                componentInputParameter: pipelinechannel--keep_date_columns
+              log_columns:
+                componentInputParameter: pipelinechannel--log_columns
+              model_filename:
+                runtimeValue:
+                  constant: startup_classifier.pkl
+              ratio_features:
+                componentInputParameter: pipelinechannel--ratio_features
+              reference_year:
+                componentInputParameter: pipelinechannel--reference_year
+          taskInfo:
+            name: Package candidate model manifest
+    inputDefinitions:
+      artifacts:
+        pipelinechannel--evaluate-classifier-evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        pipelinechannel--age_from_year_columns:
+          parameterType: LIST
+        pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+          parameterType: BOOLEAN
+        pipelinechannel--drop_columns:
+          parameterType: LIST
+        pipelinechannel--feature_date_columns:
+          parameterType: LIST
+        pipelinechannel--keep_date_columns:
+          parameterType: BOOLEAN
+        pipelinechannel--log_columns:
+          parameterType: LIST
+        pipelinechannel--ratio_features:
+          parameterType: LIST
+        pipelinechannel--reference_year:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--package-manifest-2-manifest:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-branches-1:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--condition-branches-1-oneof-2:
+            artifactSelectors:
+            - outputArtifactKey: pipelinechannel--quality-gate-approval_decision
+              producerSubtask: condition-2
+            - outputArtifactKey: pipelinechannel--quality-gate-2-approval_decision
+              producerSubtask: condition-3
+            - outputArtifactKey: pipelinechannel--quality-gate-3-approval_decision
+              producerSubtask: condition-4
+      tasks:
+        condition-2:
+          componentRef:
+            name: comp-condition-2
+          inputs:
+            parameters:
+              pipelinechannel--approval_metric:
+                componentInputParameter: pipelinechannel--approval_metric
+              pipelinechannel--evaluate-classifier-test_accuracy:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_accuracy
+              pipelinechannel--minimum_approval_metric:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: select-accuracy
+          triggerPolicy:
+            condition: inputs.parameter_values['pipelinechannel--approval_metric']
+              == 'accuracy'
+        condition-3:
+          componentRef:
+            name: comp-condition-3
+          inputs:
+            parameters:
+              pipelinechannel--approval_metric:
+                componentInputParameter: pipelinechannel--approval_metric
+              pipelinechannel--evaluate-classifier-test_balanced_accuracy:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_balanced_accuracy
+              pipelinechannel--minimum_approval_metric:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: select-balanced-accuracy
+          triggerPolicy:
+            condition: '!(inputs.parameter_values[''pipelinechannel--approval_metric'']
+              == ''accuracy'') && inputs.parameter_values[''pipelinechannel--approval_metric'']
+              == ''balanced_accuracy'''
+        condition-4:
+          componentRef:
+            name: comp-condition-4
+          inputs:
+            parameters:
+              pipelinechannel--approval_metric:
+                componentInputParameter: pipelinechannel--approval_metric
+              pipelinechannel--evaluate-classifier-test_f1_weighted:
+                componentInputParameter: pipelinechannel--evaluate-classifier-test_f1_weighted
+              pipelinechannel--minimum_approval_metric:
+                componentInputParameter: pipelinechannel--minimum_approval_metric
+          taskInfo:
+            name: select-weighted-f1
+          triggerPolicy:
+            condition: '!(inputs.parameter_values[''pipelinechannel--approval_metric'']
+              == ''accuracy'') && !(inputs.parameter_values[''pipelinechannel--approval_metric'']
+              == ''balanced_accuracy'')'
+    inputDefinitions:
+      parameters:
+        pipelinechannel--approval_metric:
+          parameterType: STRING
+        pipelinechannel--evaluate-classifier-test_accuracy:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--evaluate-classifier-test_balanced_accuracy:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--evaluate-classifier-test_f1_weighted:
+          parameterType: NUMBER_DOUBLE
+        pipelinechannel--minimum_approval_metric:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--condition-branches-1-oneof-2:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-condition-branches-5:
+    dag:
+      outputs:
+        artifacts:
+          pipelinechannel--condition-branches-5-oneof-1:
+            artifactSelectors:
+            - outputArtifactKey: pipelinechannel--package-manifest-manifest
+              producerSubtask: condition-6
+            - outputArtifactKey: pipelinechannel--package-manifest-2-manifest
+              producerSubtask: condition-7
+      tasks:
+        condition-6:
+          componentRef:
+            name: comp-condition-6
+          inputs:
+            artifacts:
+              pipelinechannel--evaluate-classifier-evaluation_metrics:
+                componentInputArtifact: pipelinechannel--evaluate-classifier-evaluation_metrics
+              pipelinechannel--train-classifier-candidate_model:
+                componentInputArtifact: pipelinechannel--train-classifier-candidate_model
+              pipelinechannel--train-classifier-training_metrics:
+                componentInputArtifact: pipelinechannel--train-classifier-training_metrics
+            parameters:
+              pipelinechannel--age_from_year_columns:
+                componentInputParameter: pipelinechannel--age_from_year_columns
+              pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+                componentInputParameter: pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1
+              pipelinechannel--drop_columns:
+                componentInputParameter: pipelinechannel--drop_columns
+              pipelinechannel--feature_date_columns:
+                componentInputParameter: pipelinechannel--feature_date_columns
+              pipelinechannel--keep_date_columns:
+                componentInputParameter: pipelinechannel--keep_date_columns
+              pipelinechannel--log_columns:
+                componentInputParameter: pipelinechannel--log_columns
+              pipelinechannel--ratio_features:
+                componentInputParameter: pipelinechannel--ratio_features
+              pipelinechannel--reference_year:
+                componentInputParameter: pipelinechannel--reference_year
+          taskInfo:
+            name: approved-model
+          triggerPolicy:
+            condition: inputs.parameter_values['pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1']
+              == true
+        condition-7:
+          componentRef:
+            name: comp-condition-7
+          inputs:
+            artifacts:
+              pipelinechannel--evaluate-classifier-evaluation_metrics:
+                componentInputArtifact: pipelinechannel--evaluate-classifier-evaluation_metrics
+              pipelinechannel--train-classifier-candidate_model:
+                componentInputArtifact: pipelinechannel--train-classifier-candidate_model
+              pipelinechannel--train-classifier-training_metrics:
+                componentInputArtifact: pipelinechannel--train-classifier-training_metrics
+            parameters:
+              pipelinechannel--age_from_year_columns:
+                componentInputParameter: pipelinechannel--age_from_year_columns
+              pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+                componentInputParameter: pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1
+              pipelinechannel--drop_columns:
+                componentInputParameter: pipelinechannel--drop_columns
+              pipelinechannel--feature_date_columns:
+                componentInputParameter: pipelinechannel--feature_date_columns
+              pipelinechannel--keep_date_columns:
+                componentInputParameter: pipelinechannel--keep_date_columns
+              pipelinechannel--log_columns:
+                componentInputParameter: pipelinechannel--log_columns
+              pipelinechannel--ratio_features:
+                componentInputParameter: pipelinechannel--ratio_features
+              pipelinechannel--reference_year:
+                componentInputParameter: pipelinechannel--reference_year
+          taskInfo:
+            name: rejected-model
+          triggerPolicy:
+            condition: '!(inputs.parameter_values[''pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1'']
+              == true)'
+    inputDefinitions:
+      artifacts:
+        pipelinechannel--evaluate-classifier-evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        pipelinechannel--train-classifier-training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        pipelinechannel--age_from_year_columns:
+          parameterType: LIST
+        pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+          parameterType: BOOLEAN
+        pipelinechannel--drop_columns:
+          parameterType: LIST
+        pipelinechannel--feature_date_columns:
+          parameterType: LIST
+        pipelinechannel--keep_date_columns:
+          parameterType: BOOLEAN
+        pipelinechannel--log_columns:
+          parameterType: LIST
+        pipelinechannel--ratio_features:
+          parameterType: LIST
+        pipelinechannel--reference_year:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        pipelinechannel--condition-branches-5-oneof-1:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-evaluate-classifier:
+    executorLabel: exec-evaluate-classifier
+    inputDefinitions:
+      artifacts:
+        candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        test_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        data_format:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        test_accuracy:
+          parameterType: NUMBER_DOUBLE
+        test_balanced_accuracy:
+          parameterType: NUMBER_DOUBLE
+        test_f1_weighted:
+          parameterType: NUMBER_DOUBLE
+  comp-importer:
+    executorLabel: exec-importer
+    inputDefinitions:
+      parameters:
+        uri:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        artifact:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-package-manifest:
+    executorLabel: exec-package-manifest
+    inputDefinitions:
+      artifacts:
+        candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        age_from_year_columns:
+          parameterType: LIST
+        date_columns:
+          parameterType: LIST
+        drop_columns:
+          parameterType: LIST
+        keep_date_columns:
+          parameterType: BOOLEAN
+        log_columns:
+          parameterType: LIST
+        model_filename:
+          parameterType: STRING
+        ratio_features:
+          parameterType: LIST
+        reference_year:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        manifest:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-package-manifest-2:
+    executorLabel: exec-package-manifest-2
+    inputDefinitions:
+      artifacts:
+        candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        evaluation_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        age_from_year_columns:
+          parameterType: LIST
+        date_columns:
+          parameterType: LIST
+        drop_columns:
+          parameterType: LIST
+        keep_date_columns:
+          parameterType: BOOLEAN
+        log_columns:
+          parameterType: LIST
+        model_filename:
+          parameterType: STRING
+        ratio_features:
+          parameterType: LIST
+        reference_year:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        manifest:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+  comp-quality-gate:
+    executorLabel: exec-quality-gate
+    inputDefinitions:
+      parameters:
+        metric_name:
+          parameterType: STRING
+        metric_value:
+          parameterType: NUMBER_DOUBLE
+        minimum_value:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        passed:
+          parameterType: BOOLEAN
+  comp-quality-gate-2:
+    executorLabel: exec-quality-gate-2
+    inputDefinitions:
+      parameters:
+        metric_name:
+          parameterType: STRING
+        metric_value:
+          parameterType: NUMBER_DOUBLE
+        minimum_value:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        passed:
+          parameterType: BOOLEAN
+  comp-quality-gate-3:
+    executorLabel: exec-quality-gate-3
+    inputDefinitions:
+      parameters:
+        metric_name:
+          parameterType: STRING
+        metric_value:
+          parameterType: NUMBER_DOUBLE
+        minimum_value:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        approval_decision:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        passed:
+          parameterType: BOOLEAN
+  comp-train-classifier:
+    executorLabel: exec-train-classifier
+    inputDefinitions:
+      artifacts:
+        train_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        validation_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        class_weight:
+          parameterType: STRING
+        data_format:
+          parameterType: STRING
+        max_iter:
+          parameterType: NUMBER_INTEGER
+        model_type:
+          parameterType: STRING
+        n_estimators:
+          parameterType: NUMBER_INTEGER
+        random_state:
+          parameterType: NUMBER_INTEGER
+        target_column:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        candidate_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        training_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+      parameters:
+        validation_accuracy:
+          parameterType: NUMBER_DOUBLE
+        validation_f1_weighted:
+          parameterType: NUMBER_DOUBLE
+  comp-validate-dataset:
+    executorLabel: exec-validate-dataset
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        allowed_target_values:
+          parameterType: LIST
+        fail_on_duplicate_rows:
+          parameterType: BOOLEAN
+        input_format:
+          parameterType: STRING
+        max_missing_fraction:
+          parameterType: NUMBER_DOUBLE
+        required_columns:
+          parameterType: LIST
+        target_column:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        validation_report:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        column_count:
+          parameterType: NUMBER_INTEGER
+        row_count:
+          parameterType: NUMBER_INTEGER
+  comp-validate-dataset-2:
+    executorLabel: exec-validate-dataset-2
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        allowed_target_values:
+          parameterType: LIST
+        fail_on_duplicate_rows:
+          parameterType: BOOLEAN
+        input_format:
+          parameterType: STRING
+        max_missing_fraction:
+          parameterType: NUMBER_DOUBLE
+        required_columns:
+          parameterType: LIST
+        target_column:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        validation_report:
+          artifactType:
+            schemaTitle: system.Artifact
+            schemaVersion: 0.0.1
+      parameters:
+        column_count:
+          parameterType: NUMBER_INTEGER
+        row_count:
+          parameterType: NUMBER_INTEGER
+deploymentSpec:
+  executors:
+    exec-build-feature-splits:
+      container:
+        args:
+        - --input-path
+        - '{{$.inputs.artifacts[''cleaned_dataset''].path}}'
+        - --input-format
+        - '{{$.inputs.parameters[''input_format'']}}'
+        - --train-output-path
+        - '{{$.outputs.artifacts[''train_dataset''].path}}'
+        - --validation-output-path
+        - '{{$.outputs.artifacts[''validation_dataset''].path}}'
+        - --test-output-path
+        - '{{$.outputs.artifacts[''test_dataset''].path}}'
+        - --metadata-output-path
+        - '{{$.outputs.artifacts[''feature_metadata''].path}}'
+        - --target-column
+        - '{{$.inputs.parameters[''target_column'']}}'
+        - --output-format
+        - '{{$.inputs.parameters[''output_format'']}}'
+        - --drop-columns-json
+        - '{{$.inputs.parameters[''drop_columns'']}}'
+        - --date-columns-json
+        - '{{$.inputs.parameters[''date_columns'']}}'
+        - --keep-date-columns
+        - '{{$.inputs.parameters[''keep_date_columns'']}}'
+        - --age-from-year-columns-json
+        - '{{$.inputs.parameters[''age_from_year_columns'']}}'
+        - --reference-year
+        - '{{$.inputs.parameters[''reference_year'']}}'
+        - --log-columns-json
+        - '{{$.inputs.parameters[''log_columns'']}}'
+        - --ratio-features-json
+        - '{{$.inputs.parameters[''ratio_features'']}}'
+        - --train-fraction
+        - '{{$.inputs.parameters[''train_fraction'']}}'
+        - --validation-fraction
+        - '{{$.inputs.parameters[''validation_fraction'']}}'
+        - --test-fraction
+        - '{{$.inputs.parameters[''test_fraction'']}}'
+        - --random-state
+        - '{{$.inputs.parameters[''random_state'']}}'
+        - --stratify
+        - '{{$.inputs.parameters[''stratify'']}}'
+        - --train-rows-output-path
+        - '{{$.outputs.parameters[''train_rows''].output_file}}'
+        - --validation-rows-output-path
+        - '{{$.outputs.parameters[''validation_rows''].output_file}}'
+        - --test-rows-output-path
+        - '{{$.outputs.parameters[''test_rows''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - build-features
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-clean-dataset:
+      container:
+        args:
+        - --input-path
+        - '{{$.inputs.artifacts[''input_dataset''].path}}'
+        - --input-format
+        - '{{$.inputs.parameters[''input_format'']}}'
+        - --output-path
+        - '{{$.outputs.artifacts[''cleaned_dataset''].path}}'
+        - --output-format
+        - '{{$.inputs.parameters[''output_format'']}}'
+        - --report-output-path
+        - '{{$.outputs.artifacts[''cleaning_report''].path}}'
+        - --numeric-columns-json
+        - '{{$.inputs.parameters[''numeric_columns'']}}'
+        - --date-columns-json
+        - '{{$.inputs.parameters[''date_columns'']}}'
+        - --missing-markers-json
+        - '{{$.inputs.parameters[''missing_markers'']}}'
+        - --drop-duplicate-rows
+        - '{{$.inputs.parameters[''drop_duplicate_rows'']}}'
+        - --drop-empty-rows
+        - '{{$.inputs.parameters[''drop_empty_rows'']}}'
+        - --input-rows-output-path
+        - '{{$.outputs.parameters[''input_rows''].output_file}}'
+        - --output-rows-output-path
+        - '{{$.outputs.parameters[''output_rows''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - clean
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-evaluate-classifier:
+      container:
+        args:
+        - --data-path
+        - '{{$.inputs.artifacts[''test_dataset''].path}}'
+        - --data-format
+        - '{{$.inputs.parameters[''data_format'']}}'
+        - --model-path
+        - '{{$.inputs.artifacts[''candidate_model''].path}}'
+        - --report-output-path
+        - '{{$.outputs.artifacts[''evaluation_metrics''].path}}'
+        - --accuracy-output-path
+        - '{{$.outputs.parameters[''test_accuracy''].output_file}}'
+        - --balanced-accuracy-output-path
+        - '{{$.outputs.parameters[''test_balanced_accuracy''].output_file}}'
+        - --f1-weighted-output-path
+        - '{{$.outputs.parameters[''test_f1_weighted''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - evaluate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-importer:
+      importer:
+        artifactUri:
+          runtimeParameter: uri
+        reimport: true
+        typeSchema:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+    exec-package-manifest:
+      container:
+        args:
+        - --model-path
+        - '{{$.inputs.artifacts[''candidate_model''].path}}'
+        - --training-metrics-path
+        - '{{$.inputs.artifacts[''training_metrics''].path}}'
+        - --evaluation-metrics-path
+        - '{{$.inputs.artifacts[''evaluation_metrics''].path}}'
+        - --manifest-output-path
+        - '{{$.outputs.artifacts[''manifest''].path}}'
+        - --model-filename
+        - '{{$.inputs.parameters[''model_filename'']}}'
+        - --drop-columns-json
+        - '{{$.inputs.parameters[''drop_columns'']}}'
+        - --date-columns-json
+        - '{{$.inputs.parameters[''date_columns'']}}'
+        - --keep-date-columns
+        - '{{$.inputs.parameters[''keep_date_columns'']}}'
+        - --age-from-year-columns-json
+        - '{{$.inputs.parameters[''age_from_year_columns'']}}'
+        - --reference-year
+        - '{{$.inputs.parameters[''reference_year'']}}'
+        - --log-columns-json
+        - '{{$.inputs.parameters[''log_columns'']}}'
+        - --ratio-features-json
+        - '{{$.inputs.parameters[''ratio_features'']}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - package
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-package-manifest-2:
+      container:
+        args:
+        - --model-path
+        - '{{$.inputs.artifacts[''candidate_model''].path}}'
+        - --training-metrics-path
+        - '{{$.inputs.artifacts[''training_metrics''].path}}'
+        - --evaluation-metrics-path
+        - '{{$.inputs.artifacts[''evaluation_metrics''].path}}'
+        - --manifest-output-path
+        - '{{$.outputs.artifacts[''manifest''].path}}'
+        - --model-filename
+        - '{{$.inputs.parameters[''model_filename'']}}'
+        - --drop-columns-json
+        - '{{$.inputs.parameters[''drop_columns'']}}'
+        - --date-columns-json
+        - '{{$.inputs.parameters[''date_columns'']}}'
+        - --keep-date-columns
+        - '{{$.inputs.parameters[''keep_date_columns'']}}'
+        - --age-from-year-columns-json
+        - '{{$.inputs.parameters[''age_from_year_columns'']}}'
+        - --reference-year
+        - '{{$.inputs.parameters[''reference_year'']}}'
+        - --log-columns-json
+        - '{{$.inputs.parameters[''log_columns'']}}'
+        - --ratio-features-json
+        - '{{$.inputs.parameters[''ratio_features'']}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - package
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-quality-gate:
+      container:
+        args:
+        - --metric-value
+        - '{{$.inputs.parameters[''metric_value'']}}'
+        - --minimum-value
+        - '{{$.inputs.parameters[''minimum_value'']}}'
+        - --metric-name
+        - '{{$.inputs.parameters[''metric_name'']}}'
+        - --approval-output-path
+        - '{{$.outputs.artifacts[''approval_decision''].path}}'
+        - --passed-output-path
+        - '{{$.outputs.parameters[''passed''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - quality-gate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-quality-gate-2:
+      container:
+        args:
+        - --metric-value
+        - '{{$.inputs.parameters[''metric_value'']}}'
+        - --minimum-value
+        - '{{$.inputs.parameters[''minimum_value'']}}'
+        - --metric-name
+        - '{{$.inputs.parameters[''metric_name'']}}'
+        - --approval-output-path
+        - '{{$.outputs.artifacts[''approval_decision''].path}}'
+        - --passed-output-path
+        - '{{$.outputs.parameters[''passed''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - quality-gate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-quality-gate-3:
+      container:
+        args:
+        - --metric-value
+        - '{{$.inputs.parameters[''metric_value'']}}'
+        - --minimum-value
+        - '{{$.inputs.parameters[''minimum_value'']}}'
+        - --metric-name
+        - '{{$.inputs.parameters[''metric_name'']}}'
+        - --approval-output-path
+        - '{{$.outputs.artifacts[''approval_decision''].path}}'
+        - --passed-output-path
+        - '{{$.outputs.parameters[''passed''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - quality-gate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-train-classifier:
+      container:
+        args:
+        - --train-path
+        - '{{$.inputs.artifacts[''train_dataset''].path}}'
+        - --validation-path
+        - '{{$.inputs.artifacts[''validation_dataset''].path}}'
+        - --data-format
+        - '{{$.inputs.parameters[''data_format'']}}'
+        - --model-output-path
+        - '{{$.outputs.artifacts[''candidate_model''].path}}'
+        - --metrics-output-path
+        - '{{$.outputs.artifacts[''training_metrics''].path}}'
+        - --target-column
+        - '{{$.inputs.parameters[''target_column'']}}'
+        - --model-type
+        - '{{$.inputs.parameters[''model_type'']}}'
+        - --random-state
+        - '{{$.inputs.parameters[''random_state'']}}'
+        - --max-iter
+        - '{{$.inputs.parameters[''max_iter'']}}'
+        - --n-estimators
+        - '{{$.inputs.parameters[''n_estimators'']}}'
+        - --class-weight
+        - '{{$.inputs.parameters[''class_weight'']}}'
+        - --accuracy-output-path
+        - '{{$.outputs.parameters[''validation_accuracy''].output_file}}'
+        - --f1-weighted-output-path
+        - '{{$.outputs.parameters[''validation_f1_weighted''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - train
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-validate-dataset:
+      container:
+        args:
+        - --input-path
+        - '{{$.inputs.artifacts[''input_dataset''].path}}'
+        - --input-format
+        - '{{$.inputs.parameters[''input_format'']}}'
+        - --report-output-path
+        - '{{$.outputs.artifacts[''validation_report''].path}}'
+        - --required-columns-json
+        - '{{$.inputs.parameters[''required_columns'']}}'
+        - --target-column
+        - '{{$.inputs.parameters[''target_column'']}}'
+        - --allowed-target-values-json
+        - '{{$.inputs.parameters[''allowed_target_values'']}}'
+        - --max-missing-fraction
+        - '{{$.inputs.parameters[''max_missing_fraction'']}}'
+        - --fail-on-duplicate-rows
+        - '{{$.inputs.parameters[''fail_on_duplicate_rows'']}}'
+        - --row-count-output-path
+        - '{{$.outputs.parameters[''row_count''].output_file}}'
+        - --column-count-output-path
+        - '{{$.outputs.parameters[''column_count''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - validate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+    exec-validate-dataset-2:
+      container:
+        args:
+        - --input-path
+        - '{{$.inputs.artifacts[''input_dataset''].path}}'
+        - --input-format
+        - '{{$.inputs.parameters[''input_format'']}}'
+        - --report-output-path
+        - '{{$.outputs.artifacts[''validation_report''].path}}'
+        - --required-columns-json
+        - '{{$.inputs.parameters[''required_columns'']}}'
+        - --target-column
+        - '{{$.inputs.parameters[''target_column'']}}'
+        - --allowed-target-values-json
+        - '{{$.inputs.parameters[''allowed_target_values'']}}'
+        - --max-missing-fraction
+        - '{{$.inputs.parameters[''max_missing_fraction'']}}'
+        - --fail-on-duplicate-rows
+        - '{{$.inputs.parameters[''fail_on_duplicate_rows'']}}'
+        - --row-count-output-path
+        - '{{$.outputs.parameters[''row_count''].output_file}}'
+        - --column-count-output-path
+        - '{{$.outputs.parameters[''column_count''].output_file}}'
+        command:
+        - python
+        - -m
+        - src.churn_model.kubeflow.runtime
+        - validate
+        image: ashutosh04121999/global-tech-startup-pipeline:v1
+pipelineInfo:
+  description: Validate, clean, feature engineer, train, evaluate, and quality gate
+    the startup acquisition classifier.
+  name: startup-acquisition-training
+root:
+  dag:
+    outputs:
+      artifacts:
+        approval_decision:
+          artifactSelectors:
+          - outputArtifactKey: pipelinechannel--condition-branches-1-oneof-2
+            producerSubtask: condition-branches-1
+        candidate_model:
+          artifactSelectors:
+          - outputArtifactKey: candidate_model
+            producerSubtask: train-classifier
+        evaluation_metrics:
+          artifactSelectors:
+          - outputArtifactKey: evaluation_metrics
+            producerSubtask: evaluate-classifier
+        manifest:
+          artifactSelectors:
+          - outputArtifactKey: pipelinechannel--condition-branches-5-oneof-1
+            producerSubtask: condition-branches-5
+    tasks:
+      build-feature-splits:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-build-feature-splits
+        dependentTasks:
+        - clean-dataset
+        - validate-dataset-2
+        inputs:
+          artifacts:
+            cleaned_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: cleaned_dataset
+                producerTask: clean-dataset
+          parameters:
+            age_from_year_columns:
+              componentInputParameter: age_from_year_columns
+            date_columns:
+              componentInputParameter: feature_date_columns
+            drop_columns:
+              componentInputParameter: drop_columns
+            input_format:
+              componentInputParameter: output_format
+            keep_date_columns:
+              componentInputParameter: keep_date_columns
+            log_columns:
+              componentInputParameter: log_columns
+            output_format:
+              componentInputParameter: output_format
+            random_state:
+              componentInputParameter: random_state
+            ratio_features:
+              componentInputParameter: ratio_features
+            reference_year:
+              componentInputParameter: reference_year
+            stratify:
+              componentInputParameter: stratify
+            target_column:
+              componentInputParameter: target_column
+            test_fraction:
+              componentInputParameter: test_fraction
+            train_fraction:
+              componentInputParameter: train_fraction
+            validation_fraction:
+              componentInputParameter: validation_fraction
+        taskInfo:
+          name: Build and split model features
+      clean-dataset:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-clean-dataset
+        dependentTasks:
+        - importer
+        - validate-dataset
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: artifact
+                producerTask: importer
+          parameters:
+            date_columns:
+              componentInputParameter: cleaning_date_columns
+            drop_duplicate_rows:
+              componentInputParameter: drop_duplicate_rows
+            drop_empty_rows:
+              componentInputParameter: drop_empty_rows
+            input_format:
+              componentInputParameter: source_format
+            missing_markers:
+              componentInputParameter: missing_markers
+            numeric_columns:
+              componentInputParameter: numeric_columns
+            output_format:
+              componentInputParameter: output_format
+        taskInfo:
+          name: Clean startup data
+      condition-branches-1:
+        componentRef:
+          name: comp-condition-branches-1
+        dependentTasks:
+        - evaluate-classifier
+        inputs:
+          parameters:
+            pipelinechannel--approval_metric:
+              componentInputParameter: approval_metric
+            pipelinechannel--evaluate-classifier-test_accuracy:
+              taskOutputParameter:
+                outputParameterKey: test_accuracy
+                producerTask: evaluate-classifier
+            pipelinechannel--evaluate-classifier-test_balanced_accuracy:
+              taskOutputParameter:
+                outputParameterKey: test_balanced_accuracy
+                producerTask: evaluate-classifier
+            pipelinechannel--evaluate-classifier-test_f1_weighted:
+              taskOutputParameter:
+                outputParameterKey: test_f1_weighted
+                producerTask: evaluate-classifier
+            pipelinechannel--minimum_approval_metric:
+              componentInputParameter: minimum_approval_metric
+        taskInfo:
+          name: condition-branches-1
+      condition-branches-5:
+        componentRef:
+          name: comp-condition-branches-5
+        dependentTasks:
+        - condition-branches-1
+        - evaluate-classifier
+        - train-classifier
+        inputs:
+          artifacts:
+            pipelinechannel--evaluate-classifier-evaluation_metrics:
+              taskOutputArtifact:
+                outputArtifactKey: evaluation_metrics
+                producerTask: evaluate-classifier
+            pipelinechannel--train-classifier-candidate_model:
+              taskOutputArtifact:
+                outputArtifactKey: candidate_model
+                producerTask: train-classifier
+            pipelinechannel--train-classifier-training_metrics:
+              taskOutputArtifact:
+                outputArtifactKey: training_metrics
+                producerTask: train-classifier
+          parameters:
+            pipelinechannel--age_from_year_columns:
+              componentInputParameter: age_from_year_columns
+            pipelinechannel--condition-branches-1-pipelinechannel--condition-branches-1-oneof-1:
+              taskOutputParameter:
+                outputParameterKey: pipelinechannel--condition-branches-1-oneof-1
+                producerTask: condition-branches-1
+            pipelinechannel--drop_columns:
+              componentInputParameter: drop_columns
+            pipelinechannel--feature_date_columns:
+              componentInputParameter: feature_date_columns
+            pipelinechannel--keep_date_columns:
+              componentInputParameter: keep_date_columns
+            pipelinechannel--log_columns:
+              componentInputParameter: log_columns
+            pipelinechannel--ratio_features:
+              componentInputParameter: ratio_features
+            pipelinechannel--reference_year:
+              componentInputParameter: reference_year
+        taskInfo:
+          name: condition-branches-5
+      evaluate-classifier:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-classifier
+        dependentTasks:
+        - build-feature-splits
+        - train-classifier
+        inputs:
+          artifacts:
+            candidate_model:
+              taskOutputArtifact:
+                outputArtifactKey: candidate_model
+                producerTask: train-classifier
+            test_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: test_dataset
+                producerTask: build-feature-splits
+          parameters:
+            data_format:
+              componentInputParameter: output_format
+        taskInfo:
+          name: Evaluate held-out test data
+      importer:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-importer
+        inputs:
+          parameters:
+            uri:
+              componentInputParameter: source_dataset_uri
+        taskInfo:
+          name: Import source startup dataset
+      train-classifier:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-classifier
+        dependentTasks:
+        - build-feature-splits
+        inputs:
+          artifacts:
+            train_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: train_dataset
+                producerTask: build-feature-splits
+            validation_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: validation_dataset
+                producerTask: build-feature-splits
+          parameters:
+            class_weight:
+              componentInputParameter: class_weight
+            data_format:
+              componentInputParameter: output_format
+            max_iter:
+              componentInputParameter: max_iter
+            model_type:
+              componentInputParameter: model_type
+            n_estimators:
+              componentInputParameter: n_estimators
+            random_state:
+              componentInputParameter: random_state
+            target_column:
+              componentInputParameter: target_column
+        taskInfo:
+          name: Train startup classifier
+      validate-dataset:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-validate-dataset
+        dependentTasks:
+        - importer
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: artifact
+                producerTask: importer
+          parameters:
+            allowed_target_values:
+              componentInputParameter: allowed_target_values
+            fail_on_duplicate_rows:
+              componentInputParameter: fail_on_duplicate_rows
+            input_format:
+              componentInputParameter: source_format
+            max_missing_fraction:
+              componentInputParameter: max_missing_fraction
+            required_columns:
+              componentInputParameter: required_columns
+            target_column:
+              componentInputParameter: target_column
+        taskInfo:
+          name: Validate raw startup data
+      validate-dataset-2:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-validate-dataset-2
+        dependentTasks:
+        - clean-dataset
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: cleaned_dataset
+                producerTask: clean-dataset
+          parameters:
+            allowed_target_values:
+              componentInputParameter: allowed_target_values
+            fail_on_duplicate_rows:
+              runtimeValue:
+                constant: true
+            input_format:
+              componentInputParameter: output_format
+            max_missing_fraction:
+              componentInputParameter: max_missing_fraction
+            required_columns:
+              componentInputParameter: required_columns
+            target_column:
+              componentInputParameter: target_column
+        taskInfo:
+          name: Validate cleaned startup data
+  inputDefinitions:
+    parameters:
+      age_from_year_columns:
+        defaultValue:
+        - founding_year
+        isOptional: true
+        parameterType: LIST
+      allowed_target_values:
+        defaultValue:
+        - Acquired
+        - Independent
+        isOptional: true
+        parameterType: LIST
+      approval_metric:
+        defaultValue: f1_weighted
+        isOptional: true
+        parameterType: STRING
+      class_weight:
+        defaultValue: balanced
+        isOptional: true
+        parameterType: STRING
+      cleaning_date_columns:
+        defaultValue: []
+        isOptional: true
+        parameterType: LIST
+      drop_columns:
+        defaultValue:
+        - company_id
+        isOptional: true
+        parameterType: LIST
+      drop_duplicate_rows:
+        defaultValue: true
+        isOptional: true
+        parameterType: BOOLEAN
+      drop_empty_rows:
+        defaultValue: true
+        isOptional: true
+        parameterType: BOOLEAN
+      fail_on_duplicate_rows:
+        defaultValue: false
+        isOptional: true
+        parameterType: BOOLEAN
+      feature_date_columns:
+        defaultValue: []
+        isOptional: true
+        parameterType: LIST
+      keep_date_columns:
+        defaultValue: false
+        isOptional: true
+        parameterType: BOOLEAN
+      log_columns:
+        defaultValue:
+        - total_funding_usd_millions
+        - valuation_usd_millions
+        - revenue_arr_millions
+        isOptional: true
+        parameterType: LIST
+      max_iter:
+        defaultValue: 2000.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      max_missing_fraction:
+        defaultValue: 1.0
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+      minimum_approval_metric:
+        defaultValue: 0.7
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+      missing_markers:
+        defaultValue:
+        - ''
+        - n/a
+        - 'null'
+        - none
+        - nan
+        isOptional: true
+        parameterType: LIST
+      model_type:
+        defaultValue: logistic_regression
+        isOptional: true
+        parameterType: STRING
+      n_estimators:
+        defaultValue: 300.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      numeric_columns:
+        defaultValue:
+        - founding_year
+        - total_funding_usd_millions
+        - valuation_usd_millions
+        - revenue_arr_millions
+        - monthly_burn_rate_millions
+        - runway_months_2024
+        - peak_headcount_2023
+        - layoffs_2024_2025
+        - current_headcount_2026
+        isOptional: true
+        parameterType: LIST
+      output_format:
+        defaultValue: parquet
+        isOptional: true
+        parameterType: STRING
+      random_state:
+        defaultValue: 42.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      ratio_features:
+        defaultValue:
+        - funding_per_employee=total_funding_usd_millions/current_headcount_2026
+        - valuation_to_revenue=valuation_usd_millions/revenue_arr_millions
+        isOptional: true
+        parameterType: LIST
+      reference_year:
+        defaultValue: 2026.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      required_columns:
+        defaultValue:
+        - company_id
+        - domain
+        - founding_year
+        - country
+        - city
+        - funding_stage
+        - total_funding_usd_millions
+        - valuation_usd_millions
+        - revenue_arr_millions
+        - monthly_burn_rate_millions
+        - runway_months_2024
+        - peak_headcount_2023
+        - layoffs_2024_2025
+        - current_headcount_2026
+        - investor_tier
+        - ai_adoption_level
+        isOptional: true
+        parameterType: LIST
+      source_dataset_uri:
+        parameterType: STRING
+      source_format:
+        defaultValue: csv
+        isOptional: true
+        parameterType: STRING
+      stratify:
+        defaultValue: true
+        isOptional: true
+        parameterType: BOOLEAN
+      target_column:
+        defaultValue: acquisition_status
+        isOptional: true
+        parameterType: STRING
+      test_fraction:
+        defaultValue: 0.15
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+      train_fraction:
+        defaultValue: 0.7
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+      validation_fraction:
+        defaultValue: 0.15
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+  outputDefinitions:
+    artifacts:
+      approval_decision:
+        artifactType:
+          schemaTitle: system.Artifact
+          schemaVersion: 0.0.1
+      candidate_model:
+        artifactType:
+          schemaTitle: system.Model
+          schemaVersion: 0.0.1
+      evaluation_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      manifest:
+        artifactType:
+          schemaTitle: system.Artifact
+          schemaVersion: 0.0.1
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.17.0

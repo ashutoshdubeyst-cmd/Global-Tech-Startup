@@ -1,0 +1,5 @@
+# Compiler and submission dependencies only; do not install these in the
+# pipeline runtime image. Keep the SDK and Kubernetes plugin on the same bounded
+# KFP v2 release line supported by the target cluster.
+kfp>=2.15,<2.18
+kfp-kubernetes>=2.15,<2.18
