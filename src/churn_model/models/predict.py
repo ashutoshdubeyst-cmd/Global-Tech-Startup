@@ -7,6 +7,7 @@ import logging
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -28,7 +29,7 @@ except ImportError:
 
 LOGGER = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_MODEL_PATH = PROJECT_ROOT / "models" / "startup_classifier.joblib"
+DEFAULT_MODEL_PATH = PROJECT_ROOT / "models" / "startup_classifier.pkl"
 DEFAULT_PREDICTIONS_PATH = (
     PROJECT_ROOT / "reports" / "predictions" / "predictions.csv"
 )
@@ -79,11 +80,116 @@ class PredictionReport:
         return "\n".join(lines)
 
 
+@dataclass(frozen=True)
+class DataFramePredictionResult:
+    """Predictions generated from an in-memory feature table."""
+
+    data: pd.DataFrame
+    prediction_column: str
+    probability_columns: tuple[str, ...]
+
+
 def _safe_label(value: object) -> str:
     """Convert a class label into a safe column-name suffix."""
 
     label = re.sub(r"[^a-zA-Z0-9]+", "_", str(value).strip().lower())
     return label.strip("_") or "unknown"
+
+
+def predict_dataframe(
+    data: pd.DataFrame,
+    artifact: dict[str, Any],
+    *,
+    prediction_column: str | None = None,
+    include_input: bool = True,
+    include_probabilities: bool = True,
+) -> DataFramePredictionResult:
+    """Generate predictions without reading or writing filesystem data.
+
+    The caller must supply an artifact returned by load_model_artifact and a
+    processed feature table. Feature alignment, categorical missing values,
+    prediction naming, and probability naming match predict_data.
+    """
+
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("Prediction input must be a pandas DataFrame.")
+    if data.empty:
+        raise ValueError("Prediction dataset contains no rows.")
+    if len(data.columns) == 0:
+        raise ValueError("Prediction dataset contains no columns.")
+    if data.columns.duplicated().any():
+        duplicates = data.columns[data.columns.duplicated()].tolist()
+        raise ValueError(f"Duplicate column names found: {duplicates}")
+
+    required_artifact_keys = {
+        "pipeline",
+        "target_column",
+        "feature_columns",
+        "categorical_columns",
+        "classes",
+    }
+    missing_keys = sorted(required_artifact_keys - set(artifact))
+    if missing_keys:
+        raise ValueError(
+            f"Model artifact is missing prediction fields: {missing_keys}"
+        )
+
+    features = prepare_feature_matrix(
+        data,
+        artifact["feature_columns"],
+        artifact["categorical_columns"],
+    )
+    pipeline = artifact["pipeline"]
+    predictions = pipeline.predict(features)
+    output_column = prediction_column or (
+        f"predicted_{artifact['target_column']}"
+    )
+    if not output_column.strip():
+        raise ValueError("prediction_column cannot be empty.")
+
+    result = (
+        data.reset_index(drop=True).copy()
+        if include_input
+        else pd.DataFrame({"source_row": range(len(data))})
+    )
+    if output_column in result.columns:
+        raise ValueError(
+            f"Prediction column '{output_column}' already exists in input."
+        )
+    result[output_column] = predictions
+
+    probability_columns: list[str] = []
+    if include_probabilities and hasattr(pipeline, "predict_proba"):
+        classes = list(artifact["classes"])
+        model_classes = getattr(pipeline, "classes_", None)
+        if model_classes is not None and list(model_classes) != classes:
+            raise ValueError(
+                "Model class order does not match the saved artifact classes."
+            )
+
+        probabilities = pipeline.predict_proba(features)
+        if probabilities.ndim != 2 or probabilities.shape[1] != len(classes):
+            raise ValueError(
+                "Probability output does not match the saved artifact classes."
+            )
+
+        used_names: set[str] = set(result.columns)
+        for index, class_label in enumerate(classes):
+            base_name = f"probability_{_safe_label(class_label)}"
+            column_name = base_name
+            suffix = 2
+            while column_name in used_names:
+                column_name = f"{base_name}_{suffix}"
+                suffix += 1
+            result[column_name] = probabilities[:, index]
+            probability_columns.append(column_name)
+            used_names.add(column_name)
+
+    return DataFramePredictionResult(
+        data=result,
+        prediction_column=output_column,
+        probability_columns=tuple(probability_columns),
+    )
 
 
 def _save_predictions(data: pd.DataFrame, path: Path) -> None:
@@ -125,61 +231,34 @@ def predict_data(config: PredictionConfig) -> PredictionReport:
 
     artifact = load_model_artifact(model_path)
     data = load_dataset(data_path)
-    if data.empty:
-        raise ValueError("Prediction dataset contains no rows.")
-
-    features = prepare_feature_matrix(
+    prediction_result = predict_dataframe(
         data,
-        artifact["feature_columns"],
-        artifact["categorical_columns"],
+        artifact,
+        prediction_column=config.prediction_column,
+        include_input=config.include_input,
+        include_probabilities=config.include_probabilities,
     )
-    pipeline = artifact["pipeline"]
-    predictions = pipeline.predict(features)
-    prediction_column = config.prediction_column or (
-        f"predicted_{artifact['target_column']}"
-    )
-
-    result = data.copy() if config.include_input else pd.DataFrame(
-        {"source_row": range(len(data))}
-    )
-    if prediction_column in result.columns:
-        raise ValueError(
-            f"Prediction column '{prediction_column}' already exists in input."
-        )
-    result[prediction_column] = predictions
-
-    probability_columns: list[str] = []
-    if config.include_probabilities and hasattr(pipeline, "predict_proba"):
-        probabilities = pipeline.predict_proba(features)
-        used_names: set[str] = set(result.columns)
-        for index, class_label in enumerate(artifact["classes"]):
-            base_name = f"probability_{_safe_label(class_label)}"
-            column_name = base_name
-            suffix = 2
-            while column_name in used_names:
-                column_name = f"{base_name}_{suffix}"
-                suffix += 1
-            result[column_name] = probabilities[:, index]
-            probability_columns.append(column_name)
-            used_names.add(column_name)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    _save_predictions(result, output_path)
+    _save_predictions(prediction_result.data, output_path)
     LOGGER.info(
         "Prediction completed: rows=%s, output=%s",
-        len(result),
+        len(prediction_result.data),
         output_path,
     )
-    if probability_columns:
-        LOGGER.info("Saved probability columns: %s", probability_columns)
+    if prediction_result.probability_columns:
+        LOGGER.info(
+            "Saved probability columns: %s",
+            list(prediction_result.probability_columns),
+        )
 
     return PredictionReport(
         data_path=data_path,
         model_path=model_path,
         output_path=output_path,
-        predicted_rows=len(result),
-        prediction_column=prediction_column,
-        probability_columns=tuple(probability_columns),
+        predicted_rows=len(prediction_result.data),
+        prediction_column=prediction_result.prediction_column,
+        probability_columns=prediction_result.probability_columns,
     )
 
 

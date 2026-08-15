@@ -214,3 +214,7 @@ FileExistsError: Inference outputs already exist: C:\Users\ashut\OneDrive\Deskto
 2026-08-14 12:42:58 | INFO     | src.churn_model.models.predict | predict.py:174 | Saved probability columns: ['probability_acquired', 'probability_acquired_fire_sale', 'probability_closed', 'probability_ipo', 'probability_independent']
 2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:380 | Inference pipeline stage completed: prediction
 2026-08-14 12:42:58 | INFO     | __main__ | inference_pipeline.py:394 | Inference pipeline completed: rows=3, predictions=C:\Users\ashut\OneDrive\Desktop\Global-Tech-Startup\reports\predictions\sample_predictions_20260814.csv
+2026-08-15 09:26:27 | INFO     | __main__ | app.py:373 | App prediction started: rows=1
+2026-08-15 09:26:27 | INFO     | src.churn_model.features.build_features | build_features.py:207 | Dropped columns: ['company_id']
+2026-08-15 09:26:27 | INFO     | src.churn_model.pipelines.dataframe_inference | dataframe_inference.py:486 | In-memory inference completed: rows=1, stage=cleaned
+2026-08-15 09:26:27 | INFO     | __main__ | app.py:381 | App prediction completed: rows=1
