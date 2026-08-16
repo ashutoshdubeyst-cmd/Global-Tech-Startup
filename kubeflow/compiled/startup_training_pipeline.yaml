@@ -945,7 +945,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - build-features
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-clean-dataset:
       container:
         args:
@@ -978,7 +978,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - clean
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-evaluate-classifier:
       container:
         args:
@@ -1001,7 +1001,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - evaluate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-importer:
       importer:
         artifactUri:
@@ -1042,7 +1042,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - package
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-package-manifest-2:
       container:
         args:
@@ -1075,7 +1075,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - package
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-quality-gate:
       container:
         args:
@@ -1094,7 +1094,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - quality-gate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-quality-gate-2:
       container:
         args:
@@ -1113,7 +1113,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - quality-gate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-quality-gate-3:
       container:
         args:
@@ -1132,7 +1132,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - quality-gate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-train-classifier:
       container:
         args:
@@ -1167,7 +1167,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - train
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-validate-dataset:
       container:
         args:
@@ -1196,7 +1196,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - validate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
     exec-validate-dataset-2:
       container:
         args:
@@ -1225,7 +1225,7 @@ deploymentSpec:
         - -m
         - src.churn_model.kubeflow.runtime
         - validate
-        image: ashutosh04121999/global-tech-startup-pipeline:v1
+        image: docker.io/ashutosh04121999/churn-pipeline:1.0.0
 pipelineInfo:
   description: Validate, clean, feature engineer, train, evaluate, and quality gate
     the startup acquisition classifier.
